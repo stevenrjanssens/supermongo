@@ -1,1 +1,1 @@
-from .database import get_database
+from .database import headers_collection

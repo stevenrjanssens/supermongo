@@ -11,14 +11,10 @@ Arguments:
 import docopt
 import sys
 from astropy.io import fits
-from pymongo import MongoClient
+from supermongo import headers_collection
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__)
-
-    client = MongoClient('localhost', 27017)
-    dbname = client['dfimages']
-    collection_name = dbname['headers']
 
     for fitsfile in arguments['<fitsfile>']:
         header = fits.getheader(fitsfile)
@@ -31,7 +27,7 @@ if __name__ == '__main__':
             del header['HISTORY']
 
         try:
-            collection_name.insert_one(header)
+            headers_collection.insert_one(header)
         except Exception as e:
             print(repr(e), file=sys.stderr)
             print(f'issue with {fitsfile}', file=sys.stderr)
