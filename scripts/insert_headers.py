@@ -12,11 +12,12 @@ import docopt
 import sys
 from astropy.io import fits
 from supermongo import headers_collection
+from tqdm import tqdm
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__)
 
-    for fitsfile in arguments['<fitsfile>']:
+    for fitsfile in tqdm(arguments['<fitsfile>']):
         header = fits.getheader(fitsfile)
         header = dict(header)
 
