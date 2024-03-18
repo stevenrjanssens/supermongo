@@ -21,11 +21,12 @@ from zoneinfo import ZoneInfo
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__)
 
-    for fitsfile in tqdm(arguments['<fitsfile>']):
-        doc = {'_id': '/'.join(fitsfile.split('/')[-3:])}
-        doc['path'] = fitsfile
+    dbdocuments = [{'path': fitsfile} for fitsfile in arguments['<fitsfile>']]
 
-        header = fits.getheader(fitsfile)
+    for doc in tqdm(dbdocuments):
+        doc['_id'] = '/'.join(doc['path'].split('/')[-3:])
+
+        header = fits.getheader(doc['path'])
         header = dict(header)
         # _HeaderCommentaryCards objects need to be removed
         if 'COMMENT' in header.keys():
@@ -52,8 +53,7 @@ if __name__ == '__main__':
         if header['IMAGETYP'] == 'flat':
             doc['flat_time'] = 'morning' if local_dt.hour < 12 else 'evening'
 
-        try:
-            headers_collection.insert_one(doc)
-        except Exception as e:
-            print(repr(e), file=sys.stderr)
-            print(f'issue with {fitsfile}', file=sys.stderr)
+    try:
+        headers_collection.insert_many(dbdocuments)
+    except Exception as e:
+        print(repr(e), file=sys.stderr)
