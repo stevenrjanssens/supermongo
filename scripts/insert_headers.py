@@ -11,12 +11,13 @@ Arguments:
 import docopt
 import sys
 from astropy.io import fits
-from supermongo import headers_collection
 from tqdm import tqdm
 import re
 import warnings
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+
+from supermongo import headers_collection
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__)
